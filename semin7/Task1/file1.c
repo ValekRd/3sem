@@ -17,9 +17,7 @@ int main()
     int     fd;                                         // дескриптор для последующей работы с исходным файлом
     char    size;
     
-    
-    
-    
+      
     if((key = ftok(pathname,0)) < 0){                   // генерируем IPC ключ
         printf("Can't generate key\n");
         exit(-1);
