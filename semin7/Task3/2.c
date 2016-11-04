@@ -18,7 +18,7 @@ int main(int argc, char *argv[], char *envp[])
     }
 
 
-    for (int i = 0; i < 100; i ++)                          // зацикливаем программу
+    for (int i = 0; i < 10000; i ++)                          // зацикливаем программу
     {
         int semid;
         if ((semid = semget(key , 1 , 0666 | IPC_CREAT)) < 0)    //создание массива семафоров или обращение к существующему
