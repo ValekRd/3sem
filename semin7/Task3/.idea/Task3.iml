@@ -6,7 +6,6 @@
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/key" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/file" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/2.c" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
@@ -118,6 +117,7 @@
           <root url="file:///System/Library/Frameworks/ImageCaptureCore.framework/Headers" />
           <root url="file:///System/Library/Frameworks/SpriteKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Automator.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/MediaPlayer.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreData.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Social.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreText.framework/Headers" />
@@ -294,6 +294,7 @@
           <root url="file:///System/Library/Frameworks/ImageCaptureCore.framework/Headers" />
           <root url="file:///System/Library/Frameworks/SpriteKit.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Automator.framework/Headers" />
+          <root url="file:///System/Library/Frameworks/MediaPlayer.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreData.framework/Headers" />
           <root url="file:///System/Library/Frameworks/Social.framework/Headers" />
           <root url="file:///System/Library/Frameworks/CoreText.framework/Headers" />
