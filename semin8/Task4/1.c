@@ -1,76 +1,162 @@
 #include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/sem.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
 #include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
 
-int main(int argc, char *argv[], char *envp[])
+
+
+int main()
 {
-    const char pathname[] = "key";
+    int     fd[2];                                              // Создаем один массив под pipe
 
-    struct sembuf mybuf;
 
+    const char pathname[] = "key";                              // имя файла для генерации ключа
 
     key_t key;
-    if ((key = ftok(pathname , 0)) < 0 )
+    if ((key = ftok(pathname , 0)) < 0 )                        // генерируем ключ
     {
         printf("Can`t generate key\n");
         exit(-1);
     }
 
+
+    if(pipe(fd) < 0)                                            // создаем pipe
+    {
+        printf("Can\'t open pipe1\n");
+        exit(-1);
+    }
+
+
+    int result = 0;                                             // идентификатор родителя и ребенка
+
+    if( (result = fork()) < 0)                                  // Рождение ребенка
+    {
+        printf("Can\'t fork child\n");
+        exit(-1);
+    }
+
     int semid;
-    if ((semid = semget(key , 1 , 0666 | IPC_CREAT)) < 0)     //создание массива семафоров или обращение к существующему
+    if ((semid = semget(key , 2 , 0666 | IPC_CREAT)) < 0)       //создание массива семафоров или обращение к существующему
     {
         printf("Can`t get semid\n");
         exit(-1);
     }
 
-    mybuf.sem_op = 0;							        // выполняем операцию Z
+    struct sembuf mybuf;
+
+
+    mybuf.sem_op = 1;							                // заполняем структуру под операцию A(S2, 1)
     mybuf.sem_flg = 0;
-    mybuf.sem_num = 0;
+    mybuf.sem_num = 1;
 
-    if (semop(semid , &mybuf , 1) < 0)
+    if (semop(semid , &mybuf , 2) < 0)                          // выполняем операцию A
     {
-        printf("Can`t wait for condition\n");
+        printf("Can`t wait for condition0\n");
         exit(-1);
     }
 
-    int fd;
-    if((fd = open("file", O_WRONLY) < 0))
-    {
-        printf("Can\'t open file\n");
-        exit(-1);
+
+    if (result > 0) {                                           // Действия родителя
+
+
+
+        for ( int i = 0; i < 100; i++)
+        {
+            int number1[2] = {2, 2};                                    // создаем массив для двух чисел a=2 и b=2
+
+            if( write(fd[1], number1, 8) != 8)                  // Пишем два числа в pipe
+            {
+                printf("Can\'t write a and b to pipe\n");
+                exit(-1);
+            }
+
+
+            mybuf.sem_op = -1;							        // заполняем структуру под операцию D(s1, 1)
+            mybuf.sem_flg = 0;
+            mybuf.sem_num = 0;
+
+            if (semop(semid , &mybuf , 2) < 0)                  // выполняем операцию D
+            {
+                printf("Can`t wait for condition1\n");
+                exit(-1);
+            }
+
+            int answer1 = 0;
+
+            if (read(fd[0], &answer1, 4) != 4)
+            {
+                printf("Can\'t read answer1 to pipe\n");
+                exit(-1);
+            }
+            
+
+            mybuf.sem_op =  1;							        // заполняем структуру под операцию A(s2, 1)
+            mybuf.sem_flg = 0;
+            mybuf.sem_num = 1;
+
+            if (semop(semid , &mybuf , 2) < 0)                  // выполняем операцию A
+            {
+                printf("Can`t wait for condition2\n");
+                exit(-1);
+            }
+
+        }
+
     }
 
-    if (write(fd, "First!", 7) != 7)
-    {
-        printf ("Cant not write <first>\n");
+
+
+    else {                                                      // Действия ребенка
+
+        for (int i = 0; i < 100; i++)
+        {
+            mybuf.sem_op = -1;							        // заполняем структуру под операцию D(s2, 1)
+            mybuf.sem_flg = 0;
+            mybuf.sem_num = 1;
+
+            if (semop(semid , &mybuf , 2) < 0)                  // выполняем операцию D
+            {
+                printf("Can`t wait for condition3\n");
+                exit(-1);
+            }
+
+            int namber2[2] = {0};                               // создаем массив для чтения чисел a и b
+
+            if(read(fd[0], namber2, 8) < 0)
+            {
+                printf("Can\'t read a и b from pipe\n");
+                exit(-1);
+            }
+
+            int answer2 = namber2[0] + namber2[1];
+
+            if( write(fd[1], &answer2, 4) != 4)                 // Пишем ответ сложения в pipe
+            {
+                printf("Can\'t write answer2 to pipe\n");
+                exit(-1);
+            }
+
+            mybuf.sem_op = 1;							        // заполняем структуру под операцию A(s1, 1)
+            mybuf.sem_flg = 0;
+            mybuf.sem_num = 0;
+
+            if (semop(semid , &mybuf , 2) < 0)                  // выполняем операцию A
+            {
+                printf("Can`t wait for condition4\n");
+                exit(-1);
+            }
+
+        }
+
+
     }
-    if (close(fd) < 0)
-    {
-        printf ("Can not close file\n");
-    }
 
 
+    printf ("Good job!\n");                                     // должно вывести дважды!
 
-    mybuf.sem_op = 1;							// выполняем операцию A
-    mybuf.sem_flg = 0;
-    mybuf.sem_num = 0;
 
-    if (semop(semid , &mybuf , 1) < 0) {
-        printf("Can`t wait for condition\n");
-        exit(-1);
-    }
-
-    int result;
-    result = execle("/Users/admin/Desktop/1/2", "/Users/admin/Desktop/1/2", "1.c", 0, envp);
-    if(result < 0)
-    {
-        printf("Error on program start\n");
-        exit(0);
-    }
 
     return 0;
 }
