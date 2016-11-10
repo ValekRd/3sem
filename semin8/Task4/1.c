@@ -90,7 +90,7 @@ int main()
                 printf("Can\'t read answer1 to pipe\n");
                 exit(-1);
             }
-            
+
 
             mybuf.sem_op =  1;							        // заполняем структуру под операцию A(s2, 1)
             mybuf.sem_flg = 0;
