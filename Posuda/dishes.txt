@@ -1,0 +1,6 @@
+cup : 2
+fork : 4
+plate : 4
+spoon : 1
+knife : 2
+pan : 6
