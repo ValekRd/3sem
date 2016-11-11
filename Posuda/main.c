@@ -33,8 +33,6 @@ int semid;
 
 int main()
 {
-    /* создаем ключ */
-
     char pathname[] = "key";
     key_t key;
     if ((key = ftok(pathname, 0)) < 0)
