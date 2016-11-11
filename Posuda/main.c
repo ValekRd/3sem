@@ -10,13 +10,14 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 
-#define TABLE_LIMIT 21                                      // вместительность стола
+#define TABLE_LIMIT 10                                      // вместительность стола
 #define NUMBER_DISH 6                                       // колличество типов посуды
+#define NUMBER_DISHES 19                                    // общее кол-во посуды
 
 
 
 struct sembuf mybuf;
-void sem_oper(int n_sem, int n);                                 // объявление функции "семафор"
+void sem_oper(int n_sem, int n);                            // объявление функции "семафор"
 
 
 
@@ -96,7 +97,7 @@ int main()
 
     if(result > 0)           // действия мойщика
     {
-        if ((fp = fopen("dishes.txt","r")) == NULL)         //открываем фаил с посудой
+        if ((fp = fopen("dishes.txt","r")) == NULL)         //открываем фаил с грязной посудой
         {
             printf("File not found.\n");
         }
@@ -105,17 +106,17 @@ int main()
 
         int n = 0;          // кол-во посуды
 
-        while (fscanf(fp, "%s %*c %d", name_dish, &n) < NUMBER_DISH + 1) //читаем файл с кол-вом посуды
+        while (fscanf(fp, "%s %*c %d", name_dish, &n) < NUMBER_DISH + 1) //читаем файл с кол-вом грязной посуды
 
             for (int i = 0; i < NUMBER_DISH; i++)
             {
                 if(strcmp(name_dish, wash[i].type_of_dish) == 0)        // смотрим информацию в структуре данные для данной посуды
                 {
-                    for(int j = 0; j < n; j++)                          //делаем для n посуд этого типа
+                    for(int j = 0; j < n; j++)
                     {
                         sleep(wash[i].time);                            // моем
 
-                        sem_oper(0, -1);                                //кладем на стол
+                        sem_oper(0,-1);                                 //кладем на стол
 
                         printf("Dishwasher washed the %s\n\n", wash[i].type_of_dish);
 
@@ -132,23 +133,24 @@ int main()
     {
         char name_dishes[15];
 
-        while(1)
+        for (int p = 0; p < NUMBER_DISHES; p ++)                        // пробегаемся по всей посуде
         {
-            read (fd[0], name_dishes, 15);
+            read (fd[0], name_dishes, 15);                              // берем со стола вымытую посуду
 
             for(int i = 0; i < NUMBER_DISH; i++)
             {
 
-                if(strcmp(name_dishes, wip[i].type_of_dish) == 0)   // смотрим информацию в структуре данные для данной посуды
+                if(strcmp(name_dishes, wip[i].type_of_dish) == 0)       // смотрим информацию в структуре данные для данной посуды
                 {
-                    sem_oper(0,1);                               //добавляем место на столе
+                    sem_oper(0,1);                                      //освобождаем место на столе
 
-                    sleep (wip[i].time);                    //вытираем
+                    sleep (wip[i].time);                                //вытираем
 
                     printf("Wipe wiped the %s\n\n", wip[i].type_of_dish);
                 }
             }
         }
+
     }
     return 0;
 }
