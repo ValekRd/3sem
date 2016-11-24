@@ -15,6 +15,10 @@
 struct dirent *dent;
 struct stat buff;
 
+/*
+ * это копия семинарского упражнения, а не file searching
+ */
+
 int main ()
 {
     DIR *dir = opendir("/Users/admin/Desktop/UNIX");        //имеем указатель dir на открытый поток дирректории
