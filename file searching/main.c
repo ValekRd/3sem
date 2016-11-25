@@ -1,47 +1,49 @@
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
 #include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/sem.h>
-#include <dirent.h>
 #include <sys/stat.h>
+#include <dirent.h>
+#include <stdlib.h>
+#include <string.h>
 
-struct dirent *dent;
-struct stat buff;
+#define MAX_LENGTH 1024
 
-int main ()
+
+int main(int argc, char* argv[])
 {
-    DIR *dir = opendir("/Users/admin/Desktop/UNIX");        //имеем указатель dir на открытый поток дирректории
-    if (dir == NULL)
+    char *directory = argv[1];
+    int depth = atoi(argv[2]);                                      // приводим строку с глубиной в числовой вид
+    char* filename = argv[3];
+
+    DIR *dir;
+    struct dirent *dept;
+    char *path = (char *)malloc(MAX_LENGTH * sizeof(char));
+    if ((dir = opendir(directory)) == NULL)                         // открваем поток с нужной директорией
     {
-        printf ("сan't open dir\n");
-        exit (-1);
+        printf("direct not open\n");
+        exit(1);
     }
-
-
-    if(dir != NULL)
+    while((dept = readdir(dir)) != NULL)
     {
-        while((dent = readdir(dir))!= NULL)
+        if (dept->d_type != DT_DIR)
         {
-            stat(dent -> d_name, &buff);
-            printf ("[%s]\t", dent->d_name);
-
-            if(buff.st_mode & S_IFREG)                      // это regular file?
-                printf ("regular file\t");
-            else                                            // иначе directory (S_IFDIR)
-                printf ("directory\t");
-
-            printf("size = %lld \n", buff.st_size);
-            
+            if(strcmp(filename, dept->d_name) == 0)                 // сравниваем искомое имя файла с присутствующими
+            {
+                printf("Path:  %s\n", directory);
+                free(path);
+                return 0;
+            }
+        }
+        if((dept->d_type == DT_DIR) && (depth > 0) && (strcmp(dept -> d_name, ".") && strcmp(dept -> d_name, "..")))
+        {
+            strcpy(path, directory);
+            strcat(path, "/");
+            strcat(path, dept->d_name);
+            if ((path, depth - 1, filename) != 0 )
+                printf ("Find file\n");
+            else
+                printf("File not found\n");
         }
     }
-    close(dir);
-
+    free(path);
+    return 0;
 }
-
