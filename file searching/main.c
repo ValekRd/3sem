@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define MAX_LENGTH 1024
+struct dirent *dept;
 
 int main(int argc, char* argv[])
 
@@ -15,11 +16,10 @@ int main(int argc, char* argv[])
     char* filename = argv[3];
 
     DIR *dir;
-    struct dirent *dept;
     char *path = (char *)malloc(MAX_LENGTH * sizeof(char));
     if ((dir = opendir(directory)) == NULL)                         // открваем поток с нужной директорией
     {
-        printf("direct not open\n");
+        printf("directory not open\n");
         exit(1);
     }
     while((dept = readdir(dir)) != NULL)
@@ -30,6 +30,7 @@ int main(int argc, char* argv[])
             {
                 printf("Path:  %s\n", directory);
                 free(path);
+                printf ("Find file\n");
                 return 0;
             }
         }
@@ -37,7 +38,7 @@ int main(int argc, char* argv[])
         {
             strcpy(path, directory);
             strcat(path, "/");
-            strcat(path, dept->d_name);
+            strcat(path, dept -> d_name);
             if ((path, depth - 1, filename) != 0 )
                 printf ("Find file\n");
             else
