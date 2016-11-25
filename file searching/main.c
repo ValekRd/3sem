@@ -7,16 +7,8 @@
 
 #define MAX_LENGTH 1024
 
-
-<<<<<<< HEAD
 int main(int argc, char* argv[])
-=======
-/*
- * это копия семинарского упражнения, а не file searching
- */
 
-int main ()
->>>>>>> origin/master
 {
     char *directory = argv[1];
     int depth = atoi(argv[2]);                                      // приводим строку с глубиной в числовой вид
