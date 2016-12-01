@@ -1,50 +1,51 @@
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <dirent.h>
-#include <stdlib.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define MAX_LENGTH 1024
+
 struct dirent *dept;
+struct stat buff;
 
-int main(int argc, char* argv[])
+int Find (char * filename, int depth, char * direct);
 
+int main(int argc, char *argv[])
 {
-    char *directory = argv[1];
-    int depth = atoi(argv[2]);                                      // приводим строку с глубиной в числовой вид
-    char* filename = argv[3];
+    Find (argv[1], atoi (argv[2]), argv[3]);                // 1 - имя искомого файла. 2 - глубина. 3 - директория поиска
 
-    DIR *dir;
-    char *path = (char *)malloc(MAX_LENGTH * sizeof(char));
-    if ((dir = opendir(directory)) == NULL)                         // открваем поток с нужной директорией
-    {
-        printf("directory not open\n");
-        exit(1);
-    }
-    while((dept = readdir(dir)) != NULL)
-    {
-        if (dept->d_type != DT_DIR)
-        {
-            if(strcmp(filename, dept->d_name) == 0)                 // сравниваем искомое имя файла с присутствующими
-            {
-                printf("Path:  %s\n", directory);
-                free(path);
-                printf ("Find file\n");
-                return 0;
-            }
-        }
-        if((dept->d_type == DT_DIR) && (depth > 0) && (strcmp(dept -> d_name, ".") && strcmp(dept -> d_name, "..")))
-        {
-            strcpy(path, directory);
-            strcat(path, "/");
-            strcat(path, dept -> d_name);
-            if ((path, depth - 1, filename) != 0 )
-                printf ("Find file\n");
-            else
-                printf("File not found\n");
-        }
-    }
-    free(path);
     return 0;
+}
+
+int Find (char * filename, int depth, char * direct)
+{
+    DIR *dir;
+
+    char *path = (char *)malloc(MAX_LENGTH * sizeof(char));
+
+
+    if ((dir = opendir (direct)) == NULL)
+    {
+        printf ("сan't open dir\n");
+        exit (-1);
+    }
+
+
+    while ((dept = readdir (dir)) != NULL)              
+    {
+        strcpy (path, direct);
+        strcat (path, "/");
+        strcat (path, dept -> d_name);
+
+        stat (path, &buff);
+
+        if (((buff.st_mode & S_IFMT) == S_IFREG) && (strcmp (filename, dept -> d_name) == 0))
+            printf("File was found in %s\n", path);
+
+        if (((buff.st_mode & S_IFMT) == S_IFDIR) && (strcmp (".", dept -> d_name) != 0) && (strcmp ("..", dept -> d_name) != 0))
+            Find (filename, depth - 1, path);
+    }
 }
