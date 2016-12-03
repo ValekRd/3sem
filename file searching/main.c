@@ -13,6 +13,10 @@ struct stat buff;
 
 int Find (char * filename, int depth, char * direct);
 
+/*
+ * у вас работа программы от depth никак не зависит
+ */
+
 int main(int argc, char *argv[])
 {
     Find (argv[1], atoi (argv[2]), argv[3]);                // 1 - имя искомого файла. 2 - глубина. 3 - директория поиска
