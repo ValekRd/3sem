@@ -37,6 +37,9 @@ int Find (char * filename, int depth, char * direct)
         exit (-1);
     }
 
+    if (depth == 0)
+        return;
+
 
     while ((dept = readdir (dir)) != NULL)              
     {
