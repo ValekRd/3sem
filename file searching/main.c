@@ -13,9 +13,6 @@ struct stat buff;
 
 int Find (char * filename, int depth, char * direct);
 
-/*
- * у вас работа программы от depth никак не зависит
- */
 
 int main(int argc, char *argv[])
 {
