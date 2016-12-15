@@ -24,11 +24,11 @@ int main()
     ppid = getpid();                            
     pid_t pid = fork();
 
-    if (pid != 0)                               //действие родителя
-    {
-        ppid = pid;
-        my_handler_send();
-    }
+            if (pid != 0)                       //действие родителя
+                {
+                    ppid = pid;
+                    my_handler_send();
+                }
     while(1);
 }
 
@@ -36,28 +36,37 @@ void my_handler_receive(int nsig)               //nsig - номер возник
 {
     int i = pointer_bit / 8;
     int position = pointer_bit % 8;
-    if (nsig == SIGUSR2)
-    {
-        result[i] |= (1 << position);           //сдвиг влево
-    }
+
+        if (nsig == SIGUSR2)
+        {
+            result[i] |= (1 << position);       //сдвиг влево
+        }
+
     pointer_bit++;
+
     kill(ppid, SIGINT);                         //передаем сигнал SIGINT процессу родителю
-    if (i == strlen(message))
-    {
-        printf("%s\n", result);
-    }
+
+        if (i == strlen(message))
+        {
+            printf("%s\n", result);
+        }
 }
 
 void my_handler_send()
 {
     char bit;
+
     int i = pointer_bit / 8;
     int position = pointer_bit % 8;
+
     bit = message[i] & (char)(1 << position);
+
     pointer_bit++;
+
     kill(ppid, bit ? SIGUSR2 : SIGUSR1);        //если bit = 0 выполняем SIGUSR1, иначе SIGUSR2
-    if (i == strlen(message))
-    {
-        exit(0);
-    }
+
+        if (i == strlen(message))
+        {
+            exit(0);
+        }
 }
