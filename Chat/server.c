@@ -68,7 +68,7 @@ int main()
     {
         bzero(line, MAX_MES_LEN);
 
-        if (((ssize_t)n = recvfrom(sockfd, line, 999, 0, (struct sockaddr*)&client, &clilen)) < 0)
+        if ((n = recvfrom(sockfd, line, 999, 0, (struct sockaddr*)&client, &clilen)) < 0)
         {
             perror(NULL);
             close(sockfd);
