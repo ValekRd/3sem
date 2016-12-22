@@ -34,19 +34,19 @@ int main()
 
 void my_handler_receive(int nsig)               //nsig - номер возникающего сигнала (данная фунция может обрабатывать несколько сигналов
 {
-    int i = pointer_bit / 8;
-    int position = pointer_bit % 8;
+    int i = pointer_bit / 8;                    // i - номер байта
+    int position = pointer_bit % 8;             // position - указывает на текущий бит
 
-        if (nsig == SIGUSR2)
+        if (nsig == SIGUSR2)                    // если сигнал ознает 1
         {
-            result[i] |= (1 << position);       //сдвиг влево
+            result[i] |= (1 << position);       // прибавляем бит 1 посредствомсдвига и записываем в результат
         }
 
     pointer_bit++;
 
     kill(ppid, SIGINT);                         //передаем сигнал SIGINT процессу родителю
 
-        if (i == strlen(message))
+        if (i == strlen(message))               // если передали всю строку (все кол-во байтов)
         {
             printf("%s\n", result);
         }
@@ -59,7 +59,7 @@ void my_handler_send()
     int i = pointer_bit / 8;
     int position = pointer_bit % 8;
 
-    bit = message[i] & (char)(1 << position);
+    bit = message[i] & (char)(1 << position);       //кладем в переменную бит текущий бит в message[i]
 
     pointer_bit++;
 
