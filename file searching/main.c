@@ -38,7 +38,7 @@ int Find (char * filename, int depth, char * direct)
         return;
 
 
-    while ((dept = readdir (dir)) != NULL)              
+    while ((dept = readdir (dir)) != NULL)
     {
         strcpy (path, direct);
         strcat (path, "/");
