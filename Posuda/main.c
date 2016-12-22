@@ -113,7 +113,7 @@ int main()
                     {
                         sleep(wash[i].time);                            // моем
 
-                        sem_oper(0,-1);                                 //кладем на стол
+                        sem_oper(0,-1);                                 //кладем на стол семафор B
 
                         printf("Dishwasher washed the %s\n\n", wash[i].type_of_dish);
 
@@ -128,18 +128,21 @@ int main()
 
     else                    // действия вытиральщика
     {
+
         char name_dishes[10];
 
         for (int p = 0; p < NUMBER_DISHES; p ++)                        // пробегаемся по всей посуде
         {
-            read (fd[0], name_dishes, 10);                              // берем со стола вымытую посуду
+
+            read (fd[0], name_dishes, 10);                             // берем со стола вымытую посуду
+
 
             for(int i = 0; i < NUMBER_DISH; i++)
             {
 
                 if(strcmp(name_dishes, wip[i].type_of_dish) == 0)       // смотрим информацию в структуре данные для данной посуды
                 {
-                    sem_oper(0,1);                                      //берем посуду со стола
+                    sem_oper(0,1);                                      //берем посуду со стола семафор A
 
                     sleep (wip[i].time);                                //вытираем
 
